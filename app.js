@@ -7,12 +7,12 @@ const app = express();
 
 app.get("/api/categories", getAllCategories);
 
-app.all("*", (req, res, next) => {
+app.all("*", (req, res, next) =>
   next({
     error: `${req.originalUrl} is not available on this server`,
     status: 404,
-  });
-});
+  })
+);
 
 app.use(errorHandler);
 
