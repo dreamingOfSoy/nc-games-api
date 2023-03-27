@@ -13,6 +13,18 @@ afterAll(() => {
   return db.end();
 });
 
+describe("ALL /api/wrong-path", () => {
+  it("404 - should respond with the correct status code and message if given a url that is not available on this server", () => {
+    return request(app)
+      .get("/api/wrong-path")
+      .expect(404)
+      .then((res) => {
+        const { error } = res.body;
+        expect(error).toBe("/api/wrong-path is not available on this server");
+      });
+  });
+});
+
 describe("GET /api/categories", () => {
   it("200 - should respond with correct status code and contain correct feilds (slug, description)", () => {
     return request(app)
