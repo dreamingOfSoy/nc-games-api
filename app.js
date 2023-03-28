@@ -1,5 +1,7 @@
 const { getAllCategories } = require("./controllers/categoryController");
 const { getOneReview } = require("./controllers/reviewController");
+const { clientErrorHandler } = require("./errorHandlers/clientErrorHandler");
+const { psqlErrorHandler } = require("./errorHandlers/psqlErrorHandler");
 
 const express = require("express");
 
@@ -14,5 +16,8 @@ app.all("*", (req, res, next) => {
     status: 404,
   });
 });
+
+app.use(clientErrorHandler);
+app.use(psqlErrorHandler);
 
 module.exports = app;
