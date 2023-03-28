@@ -68,4 +68,28 @@ describe("GET /api/reviews/:review_id", () => {
         });
       });
   });
+
+  it("200 - should respond with correct status code and contain an empty array when no entry is found", () => {
+    return request(app)
+      .get("/api/reviews/10000")
+      .expect(200)
+      .then((res) => {
+        const { data: review } = res.body;
+
+        expect(review).toHaveLength(0);
+      });
+  });
+
+  it("400 - should respond with correct status code when inputting incorrect review id", () => {
+    return request(app)
+      .get("/api/reviews/wrong")
+      .expect(400)
+      .then((res) => {
+        const { error } = res.body;
+
+        expect(error).toBe(
+          "'/api/reviews/wrong' constains an invalid input parameter"
+        );
+      });
+  });
 });
