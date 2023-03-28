@@ -52,8 +52,10 @@ describe("GET /api/reviews/:review_id", () => {
       .expect(200)
       .then((res) => {
         const {
-          data: [review],
+          review: [review],
         } = res.body;
+
+        expect(review.review_id).toBe(1);
 
         expect(review).toMatchObject({
           review_id: expect.any(Number),
@@ -69,14 +71,14 @@ describe("GET /api/reviews/:review_id", () => {
       });
   });
 
-  it("200 - should respond with correct status code and contain an empty array when no entry is found", () => {
+  it("404 - should respond with correct status code and contain an empty array when no entry is found", () => {
     return request(app)
-      .get("/api/reviews/10000")
-      .expect(200)
+      .get("/api/reviews/99999")
+      .expect(404)
       .then((res) => {
-        const { data: review } = res.body;
+        const { error } = res.body;
 
-        expect(review).toHaveLength(0);
+        expect(error).toBe("review not found");
       });
   });
 
