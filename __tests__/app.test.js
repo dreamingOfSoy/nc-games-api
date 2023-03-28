@@ -45,7 +45,7 @@ describe("GET /api/categories", () => {
   });
 });
 
-describe.only("GET /api/reviews/:review_id", () => {
+describe("GET /api/reviews/:review_id", () => {
   it("200 - should respond with correct status code and contain correct feilds", () => {
     return request(app)
       .get("/api/reviews/1")
