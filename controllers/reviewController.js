@@ -5,5 +5,5 @@ exports.getOneReview = (req, res, next) => {
 
   const review = findOneReview(id);
 
-  review.then((data) => res.status(200).send({ data }));
+  review.then((data) => res.status(200).send({ data })).catch(next);
 };
