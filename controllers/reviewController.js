@@ -5,5 +5,13 @@ exports.getOneReview = (req, res, next) => {
 
   const review = findOneReview(id);
 
-  review.then((data) => res.status(200).send({ data })).catch(next);
+  review
+    .then((data) => {
+      if (data.length === 0) {
+        return Promise.reject({ error: "review not found", status: 404 });
+      }
+
+      res.status(200).send({ review: data });
+    })
+    .catch(next);
 };
