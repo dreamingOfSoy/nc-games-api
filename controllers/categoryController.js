@@ -1,7 +1,7 @@
-const Category = require("../models/categoryModel");
+const { findAllCategories } = require("../models/categoryModel");
 
 exports.getAllCategories = (req, res) => {
-  const categories = Category.find();
+  const categories = findAllCategories();
 
   categories.then((data) => res.status(200).send({ data }));
 };
