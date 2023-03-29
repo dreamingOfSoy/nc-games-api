@@ -130,3 +130,54 @@ describe("GET /api/reviews", () => {
       });
   });
 });
+
+describe.only("GET /api/reviews/:review_id/comments", () => {
+  it("200 - should respond with an array of comments for a given review and contain the correct properties", () => {
+    return request(app)
+      .get("/api/reviews/3/comments")
+      .expect(200)
+      .then((res) => {
+        const { comments } = res.body;
+
+        expect(comments).toHaveLength(3);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            review_id: expect.any(Number),
+          });
+        });
+      });
+  });
+  it("200 - comments should be in ascending order", () => {
+    return request(app)
+      .get("/api/reviews/3/comments")
+      .expect(200)
+      .then((res) => {
+        const { comments } = res.body;
+        expect(comments).toBeSortedBy("created_at");
+      });
+  });
+  it("200 - should repond with an empty array if no comments exist for that review", () => {
+    return request(app)
+      .get("/api/reviews/5/comments")
+      .expect(200)
+      .then((res) => {
+        const { comments } = res.body;
+        expect(comments).toHaveLength(0);
+      });
+  });
+  it("404 - should respond with a 404 if review is not in the db", () => {
+    return request(app)
+      .get("/api/reviews/999999/comments")
+      .expect(404)
+      .then((res) => {
+        const { error } = res.body;
+
+        expect(error).toBe("review not found");
+      });
+  });
+});
