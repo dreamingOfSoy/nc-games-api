@@ -131,7 +131,7 @@ describe("GET /api/reviews", () => {
   });
 });
 
-describe.only("GET /api/reviews/:review_id/comments", () => {
+describe("GET /api/reviews/:review_id/comments", () => {
   it("200 - should respond with an array of comments for a given review and contain the correct properties", () => {
     return request(app)
       .get("/api/reviews/3/comments")
