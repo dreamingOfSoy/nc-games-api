@@ -1,4 +1,4 @@
-const { findOneReview } = require("../models/reviewModel");
+const { findOneReview, findAllReviews } = require("../models/reviewModel");
 
 exports.getOneReview = (req, res, next) => {
   const { review_id: id } = req.params;
@@ -14,4 +14,13 @@ exports.getOneReview = (req, res, next) => {
       res.status(200).send({ review: data });
     })
     .catch(next);
+};
+
+exports.getAllReviews = (req, res, next) => {
+  const reviews = findAllReviews();
+
+  reviews.then((data) => {
+    console.log(data);
+    res.status(200).send({ reviews: data });
+  });
 };
