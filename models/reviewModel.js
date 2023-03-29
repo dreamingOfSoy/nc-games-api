@@ -6,7 +6,13 @@ exports.findOneReview = (id) => {
   WHERE review_id = $1
   `;
 
-  return db.query(query, [id]).then((res) => res.rows);
+  return db.query(query, [id]).then((res) => {
+    if (res.rows.length === 0) {
+      return Promise.reject({ error: "review not found", status: 404 });
+    }
+
+    return res.rows;
+  });
 };
 
 exports.findAllReviews = () => {
@@ -28,4 +34,20 @@ exports.findAllReviews = () => {
   `;
 
   return db.query(queryString).then((res) => res.rows);
+};
+
+exports.findAllComments = (id) => {
+  const queryString = `
+  SELECT 
+  comment_id,
+  votes,
+  created_at,
+  author,
+  body,
+  review_id
+  FROM comments
+  WHERE review_id = $1;
+  `;
+
+  return db.query(queryString, [id]).then((res) => res.rows);
 };
