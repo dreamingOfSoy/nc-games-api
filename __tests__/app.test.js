@@ -3,7 +3,7 @@ const app = require("../app");
 const seed = require("../db/seeds/seed");
 const request = require("supertest");
 const testData = require("../db/data/test-data");
-const { categoryData } = require("../db/data/test-data/index");
+const { categoryData, reviewData } = require("../db/data/test-data/index");
 
 beforeEach(() => {
   return seed(testData);
@@ -31,7 +31,7 @@ describe("GET /api/categories", () => {
       .get("/api/categories")
       .expect(200)
       .then((res) => {
-        const { data: categories } = res.body;
+        const { categories } = res.body;
 
         expect(categories).toHaveLength(categoryData.length);
 
@@ -90,6 +90,43 @@ describe("GET /api/reviews/:review_id", () => {
         expect(error).toBe(
           "'/api/reviews/wrong' constains an invalid input parameter"
         );
+      });
+  });
+});
+
+describe("GET /api/reviews", () => {
+  it("200 - should respond with correct status code and contain correct feilds", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then((res) => {
+        const { reviews } = res.body;
+
+        expect(reviews).toHaveLength(reviewData.length);
+
+        reviews.forEach((review) => {
+          expect(review).toMatchObject({
+            owner: expect.any(String),
+            title: expect.any(String),
+            review_id: expect.any(Number),
+            category: expect.any(String),
+            review_img_url: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            designer: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
+  });
+  it("200 - shoud repsond with reviews in descending order", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then((res) => {
+        const { reviews } = res.body;
+
+        expect(reviews).toBeSortedBy("created_at", { descending: true });
       });
   });
 });
