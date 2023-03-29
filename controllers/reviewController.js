@@ -20,7 +20,6 @@ exports.getAllReviews = (req, res, next) => {
   const reviews = findAllReviews();
 
   reviews.then((data) => {
-    console.log(data);
     res.status(200).send({ reviews: data });
   });
 };
