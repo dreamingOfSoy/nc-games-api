@@ -88,7 +88,7 @@ describe("GET /api/reviews/:review_id", () => {
         const { error } = res.body;
 
         expect(error).toBe(
-          "'/api/reviews/wrong' constains an invalid input parameter"
+          "'/api/reviews/wrong' contains an invalid input parameter"
         );
       });
   });
@@ -168,6 +168,18 @@ describe("GET /api/reviews/:review_id/comments", () => {
       .then((res) => {
         const { comments } = res.body;
         expect(comments).toHaveLength(0);
+      });
+  });
+  it("400 - should respond with correct status code when inputting incorrect review id", () => {
+    return request(app)
+      .get("/api/reviews/toast/comments")
+      .expect(400)
+      .then((res) => {
+        const { error } = res.body;
+
+        expect(error).toBe(
+          "'/api/reviews/toast/comments' contains an invalid input parameter"
+        );
       });
   });
   it("404 - should respond with a 404 if review is not in the db", () => {
