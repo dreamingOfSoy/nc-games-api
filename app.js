@@ -1,5 +1,8 @@
 const { getAllCategories } = require("./controllers/categoryController");
-const { getOneReview } = require("./controllers/reviewController");
+const {
+  getOneReview,
+  getAllReviews,
+} = require("./controllers/reviewController");
 const { clientErrorHandler } = require("./errorHandlers/clientErrorHandler");
 const { psqlErrorHandler } = require("./errorHandlers/psqlErrorHandler");
 
@@ -9,6 +12,7 @@ const app = express();
 
 app.get("/api/categories", getAllCategories);
 app.get("/api/reviews/:review_id", getOneReview);
+app.get("/api/reviews", getAllReviews);
 
 app.all("*", (req, res, next) => {
   res.status(404).send({
