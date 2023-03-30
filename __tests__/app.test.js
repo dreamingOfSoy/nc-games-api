@@ -193,3 +193,135 @@ describe("GET /api/reviews/:review_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/reviews/:review_id/comments", () => {
+  it("201 - should respond with the correct status code and posted comment", () => {
+    const commentToAdd = {
+      username: "dav3rid",
+      body: "great review!",
+    };
+
+    return request(app)
+      .post("/api/reviews/3/comments")
+      .send(commentToAdd)
+      .expect(201)
+      .then((res) => {
+        const {
+          comment: [comment],
+        } = res.body;
+
+        expect(comment).toMatchObject({
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          review_id: expect.any(Number),
+        });
+      });
+  });
+  it("201 - should respond with 1 added to the length of the comments for that review", () => {
+    const commentToAdd = {
+      username: "dav3rid",
+      body: "great review!",
+    };
+
+    return request(app)
+      .post("/api/reviews/3/comments")
+      .send(commentToAdd)
+      .expect(201)
+      .then(() => {
+        return request(app)
+          .get("/api/reviews/3/comments")
+          .then((res) => {
+            const { comments } = res.body;
+
+            expect(comments).toHaveLength(4);
+          });
+      });
+  });
+  it("201 - should respond with the correct values added", () => {
+    const commentToAdd = {
+      username: "dav3rid",
+      body: "great review!",
+    };
+
+    return request(app)
+      .post("/api/reviews/3/comments")
+      .send(commentToAdd)
+      .expect(201)
+      .then((res) => {
+        const {
+          comment: [comment],
+        } = res.body;
+
+        expect(comment.author).toBe("dav3rid");
+        expect(comment.body).toBe("great review!");
+      });
+  });
+  it("422 - should response with the correct status code when wrong input is given", () => {
+    const commentToAdd = {
+      username: "dav3rid",
+    };
+
+    return request(app)
+      .post("/api/reviews/3/comments")
+      .send(commentToAdd)
+      .expect(422)
+      .then((res) => {
+        const { error } = res.body;
+
+        expect(error).toBe("A comment must have both a body and a username");
+      });
+  });
+  it("404 - should respond with correct status code when username does not exists", () => {
+    const commentToAdd = {
+      username: "user4987387",
+      body: "great review!",
+    };
+
+    return request(app)
+      .post("/api/reviews/3/comments")
+      .send(commentToAdd)
+      .expect(404)
+      .then((res) => {
+        const { error } = res.body;
+
+        expect(error).toBe("user4987387 does not exist");
+      });
+  });
+  it("400 - should respond with correct status code when inputting incorrect review id", () => {
+    const commentToAdd = {
+      username: "dav3rid",
+      body: "great review!",
+    };
+
+    return request(app)
+      .post("/api/reviews/toast/comments")
+      .send(commentToAdd)
+      .expect(400)
+      .then((res) => {
+        const { error } = res.body;
+
+        expect(error).toBe(
+          "'/api/reviews/toast/comments' contains an invalid input parameter"
+        );
+      });
+  });
+  it("404 - should respond with a 404 if review is not in the db", () => {
+    const commentToAdd = {
+      username: "dav3rid",
+      body: "great review!",
+    };
+
+    return request(app)
+      .post("/api/reviews/999999/comments")
+      .send(commentToAdd)
+      .expect(404)
+      .then((res) => {
+        const { error } = res.body;
+
+        expect(error).toBe("review not found");
+      });
+  });
+});
