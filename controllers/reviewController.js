@@ -44,9 +44,8 @@ exports.patchOneReview = (req, res, next) => {
   const { body } = req;
 
   Promise.all([findOneReview(id), updateOneReview(id, body)])
-    .then(([review, updatedReview]) => {
-      console.log(updatedReview);
-      res.status(200).send({ review: updatedReview });
-    })
+    .then(([review, updatedReview]) =>
+      res.status(200).send({ review: updatedReview })
+    )
     .catch(next);
 };
