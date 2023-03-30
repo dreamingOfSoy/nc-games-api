@@ -76,3 +76,31 @@ exports.addOneComment = (id, comment) => {
     return res.rows;
   });
 };
+
+exports.updateOneReview = (id, body) => {
+  const inputIsNotNumber = !/^[0-9]*$/.test(body.inc_votes);
+
+  if (body && !body.inc_votes) {
+    return Promise.reject({
+      error: "Only the votes field may be updated at this time",
+      status: 422,
+    });
+  }
+
+  if (inputIsNotNumber) {
+    return Promise.reject({
+      error: "Invalid input type for votes, input must be a number",
+      status: 400,
+    });
+  }
+
+  const queryString = `
+    UPDATE reviews
+    SET
+      votes = votes + $2
+    WHERE review_id = $1
+    RETURNING *
+  `;
+
+  return db.query(queryString, [id, body.inc_votes]).then((res) => res.rows);
+};

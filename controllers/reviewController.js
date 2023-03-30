@@ -3,6 +3,7 @@ const {
   findAllReviews,
   findAllComments,
   addOneComment,
+  updateOneReview,
 } = require("../models/reviewModel");
 
 exports.getOneReview = (req, res, next) => {
@@ -35,5 +36,16 @@ exports.postOneComment = (req, res, next) => {
 
   Promise.all([findOneReview(id), addOneComment(id, body)])
     .then(([review, comment]) => res.status(201).send({ comment }))
+    .catch(next);
+};
+
+exports.patchOneReview = (req, res, next) => {
+  const { review_id: id } = req.params;
+  const { body } = req;
+
+  Promise.all([findOneReview(id), updateOneReview(id, body)])
+    .then(([review, updatedReview]) =>
+      res.status(200).send({ review: updatedReview })
+    )
     .catch(next);
 };

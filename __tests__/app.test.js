@@ -325,3 +325,87 @@ describe("POST /api/reviews/:review_id/comments", () => {
       });
   });
 });
+
+describe("PATCH /api/reviews/:review_id", () => {
+  it("200 - should respond with the correct status code and modified review", () => {
+    return request(app)
+      .patch("/api/reviews/3")
+      .send({
+        inc_votes: 10,
+      })
+      .expect(200)
+      .then((res) => {
+        const {
+          review: [review],
+        } = res.body;
+
+        expect(review).toMatchObject({
+          owner: expect.any(String),
+          title: expect.any(String),
+          review_id: 3,
+          category: expect.any(String),
+          review_body: expect.any(String),
+          review_img_url: expect.any(String),
+          created_at: expect.any(String),
+          votes: 15,
+          designer: expect.any(String),
+        });
+      });
+  });
+  it("404 - should respond with 404 if review is not in the db", () => {
+    return request(app)
+      .patch("/api/reviews/999999")
+      .send({
+        inc_votes: 10,
+      })
+      .expect(404)
+      .then((res) => {
+        const { error } = res.body;
+
+        expect(error).toBe("review not found");
+      });
+  });
+  it("400 - should respond with 400 when inputting invalid review_id", () => {
+    return request(app)
+      .patch("/api/reviews/toast")
+      .send({
+        inc_votes: 10,
+      })
+      .expect(400)
+      .then((res) => {
+        const { error } = res.body;
+
+        expect(error).toBe(
+          "'/api/reviews/toast' contains an invalid input parameter"
+        );
+      });
+  });
+  it("422 - should respond with the correct status code if the field being changed doesn't exist or is restricted", () => {
+    return request(app)
+      .patch("/api/reviews/toast")
+      .send({
+        title: "new title",
+      })
+      .expect(422)
+      .then((res) => {
+        const { error } = res.body;
+
+        expect(error).toBe("Only the votes field may be updated at this time");
+      });
+  });
+  it("400 - should respond with correct status code if the value of votes is not a number", () => {
+    return request(app)
+      .patch("/api/reviews/3")
+      .send({
+        inc_votes: "ten",
+      })
+      .expect(400)
+      .then((res) => {
+        const { error } = res.body;
+
+        expect(error).toBe(
+          "Invalid input type for votes, input must be a number"
+        );
+      });
+  });
+});
