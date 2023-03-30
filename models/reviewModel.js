@@ -16,8 +16,15 @@ exports.findOneReview = (id) => {
   });
 };
 
-exports.findAllReviews = () => {
-  const queryString = `
+exports.findAllReviews = (category, sort_by, order = "desc") => {
+  if (order !== "asc" && order !== "desc") {
+    return Promise.reject({
+      error: "Order query can only be asc or desc",
+      status: 400,
+    });
+  }
+
+  let queryString = `
   SELECT 
   reviews.owner,
   reviews.title,
@@ -31,8 +38,24 @@ exports.findAllReviews = () => {
   FROM reviews
   LEFT JOIN comments ON comments.review_id = reviews.review_id
   GROUP BY reviews.review_id
-  ORDER BY created_at DESC;
+  ORDER BY created_at ${order.toUpperCase()}
   `;
+
+  if (category) {
+    queryString = queryString.replace(
+      "GROUP BY reviews.review_id",
+      format("WHERE reviews.category = %L GROUP BY reviews.review_id", [
+        category.replace("-", " "),
+      ])
+    );
+  }
+
+  if (sort_by) {
+    queryString = queryString.replace(
+      "ORDER BY created_at",
+      format("ORDER BY reviews.%s", [sort_by])
+    );
+  }
 
   return db.query(queryString).then((res) => res.rows);
 };
