@@ -123,7 +123,7 @@ describe("GET /api/reviews", () => {
         });
       });
   });
-  it("200 - shoud repsond with reviews in descending order", () => {
+  it("200 - should repsond with reviews in descending order", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
@@ -132,6 +132,71 @@ describe("GET /api/reviews", () => {
 
         expect(reviews).toBeSortedBy("created_at", { descending: true });
       });
+  });
+
+  describe("GET /api/reviews?category=social-deduction", () => {
+    it("200 - should respond with only the reviews that match the query category", () => {
+      return request(app)
+        .get("/api/reviews?category=social-deduction")
+        .expect(200)
+        .then((res) => {
+          const { reviews } = res.body;
+
+          reviews.forEach((review) => {
+            expect(review.category).toBe("social deduction");
+          });
+        });
+    });
+    it("200 - should respond with reviews sorted by the query field", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=votes&order=asc")
+        .expect(200)
+        .then((res) => {
+          const { reviews } = res.body;
+
+          expect(reviews).toBeSortedBy("votes");
+        });
+    });
+    it("200 - should respond with reviews sorted by the query field and depending on an optional order query", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=votes&order=desc")
+        .expect(200)
+        .then((res) => {
+          const { reviews } = res.body;
+
+          expect(reviews).toBeSortedBy("votes", { descending: "true" });
+        });
+    });
+    it("404 - should respond with correct status code if category query does not exist in db", () => {
+      return request(app)
+        .get("/api/reviews?category=illegal")
+        .expect(404)
+        .then((res) => {
+          const { error } = res.body;
+
+          expect(error).toBe("No category with the name illegal");
+        });
+    });
+    it("400 - should respond with correct status code if invalid sort_by query is given", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=illegal")
+        .expect(400)
+        .then((res) => {
+          const { error } = res.body;
+
+          expect(error).toBe("illegal does not exist");
+        });
+    });
+    it("400 - should respond with correct status code if invalid order query is given", () => {
+      return request(app)
+        .get("/api/reviews?order=illegal")
+        .expect(400)
+        .then((res) => {
+          const { error } = res.body;
+
+          expect(error).toBe("Order query can only be asc or desc");
+        });
+    });
   });
 });
 
