@@ -409,3 +409,38 @@ describe("PATCH /api/reviews/:review_id", () => {
       });
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  it("204 - should respond with correct status code and no content", () => {
+    return request(app).delete("/api/comments/3").expect(204);
+  });
+  it("404 - should respond with 404 after the comment has been deleted", () => {
+    return request(app)
+      .delete("/api/comments/3")
+      .then(() => {
+        return request(app).delete("/api/reviews/3").expect(404);
+      });
+  });
+  it("404 - should respond with 404 if comment is not in the db", () => {
+    return request(app)
+      .delete("/api/comments/99999")
+      .expect(404)
+      .then((res) => {
+        const { error } = res.body;
+
+        expect(error).toBe("review not found");
+      });
+  });
+  it("400 - should respond with correct status code when inputting incorrect comment id", () => {
+    return request(app)
+      .delete("/api/comments/toast")
+      .expect(400)
+      .then((res) => {
+        const { error } = res.body;
+
+        expect(error).toBe(
+          "'/api/comments/toast' contains an invalid input parameter"
+        );
+      });
+  });
+});
