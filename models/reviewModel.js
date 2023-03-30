@@ -76,3 +76,22 @@ exports.addOneComment = (id, comment) => {
     return res.rows;
   });
 };
+
+exports.updateOneReview = (id, body) => {
+  if (body && !body.inc_votes) {
+    return Promise.reject({
+      error: "Only the votes field may be updated at this time",
+      status: 422,
+    });
+  }
+
+  const queryString = `
+    UPDATE reviews
+    SET
+      votes = votes + $2
+    WHERE review_id = $1
+    RETURNING *
+  `;
+
+  return db.query(queryString, [id, body.inc_votes]).then((res) => res.rows);
+};
