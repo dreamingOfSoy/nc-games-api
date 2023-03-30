@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const format = require("pg-format");
 
 exports.findOneReview = (id) => {
   const query = `
@@ -50,4 +51,28 @@ exports.findAllComments = (id) => {
   `;
 
   return db.query(queryString, [id]).then((res) => res.rows);
+};
+
+exports.addOneComment = (id, comment) => {
+  if (comment && (!comment.username || !comment.body)) {
+    return Promise.reject({
+      error: "A comment must have both a body and a username",
+      status: 422,
+    });
+  }
+
+  const queryString = format(
+    `
+  INSERT INTO comments
+    (votes, created_at, author, body, review_id)
+  VALUES
+    (%L)
+  RETURNING *;
+  `,
+    [0, new Date(Date.now()), comment.username, comment.body, id]
+  );
+
+  return db.query(queryString).then((res) => {
+    return res.rows;
+  });
 };
