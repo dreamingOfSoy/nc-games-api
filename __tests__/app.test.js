@@ -393,4 +393,19 @@ describe("PATCH /api/reviews/:review_id", () => {
         expect(error).toBe("Only the votes field may be updated at this time");
       });
   });
+  it("400 - should respond with correct status code if the value of votes is not a number", () => {
+    return request(app)
+      .patch("/api/reviews/3")
+      .send({
+        inc_votes: "ten",
+      })
+      .expect(400)
+      .then((res) => {
+        const { error } = res.body;
+
+        expect(error).toBe(
+          "Invalid input type for votes, input must be a number"
+        );
+      });
+  });
 });
