@@ -15,11 +15,24 @@ exports.getOneReview = (req, res, next) => {
 };
 
 exports.getAllReviews = (req, res, next) => {
-  const reviews = findAllReviews();
+  const { category, sort_by, order } = req.query;
 
-  reviews.then((data) => {
-    res.status(200).send({ reviews: data });
-  });
+  const reviews = findAllReviews(category, sort_by, order);
+
+  reviews
+    .then((data) => {
+      {
+        if (category && data.length === 0) {
+          return Promise.reject({
+            error: `No category with the name ${category}`,
+            status: 404,
+          });
+        }
+
+        res.status(200).send({ reviews: data });
+      }
+    })
+    .catch(next);
 };
 
 exports.getAllComments = (req, res, next) => {
