@@ -3,7 +3,11 @@ const app = require("../app");
 const seed = require("../db/seeds/seed");
 const request = require("supertest");
 const testData = require("../db/data/test-data");
-const { categoryData, reviewData } = require("../db/data/test-data/index");
+const {
+  categoryData,
+  reviewData,
+  userData,
+} = require("../db/data/test-data/index");
 
 beforeEach(() => {
   return seed(testData);
@@ -441,6 +445,29 @@ describe("DELETE /api/comments/:comment_id", () => {
         expect(error).toBe(
           "'/api/comments/toast' contains an invalid input parameter"
         );
+      });
+  });
+});
+
+describe("GET /api/users", () => {
+  it("200 - should respond with correct status code and contain correct feilds", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((res) => {
+        const { users } = res.body;
+
+        expect(users).toHaveLength(userData.length);
+
+        console.log(users);
+
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
       });
   });
 });
