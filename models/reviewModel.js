@@ -78,10 +78,19 @@ exports.addOneComment = (id, comment) => {
 };
 
 exports.updateOneReview = (id, body) => {
+  const inputIsNotNumber = !/^[0-9]*$/.test(body.inc_votes);
+
   if (body && !body.inc_votes) {
     return Promise.reject({
       error: "Only the votes field may be updated at this time",
       status: 422,
+    });
+  }
+
+  if (inputIsNotNumber) {
+    return Promise.reject({
+      error: "Invalid input type for votes, input must be a number",
+      status: 400,
     });
   }
 
