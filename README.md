@@ -8,7 +8,7 @@ Environment Variables: Following the .env-example files (.env-development-exampl
 
 ### What is this project?
 
-This project was undertaken to focus learning on utilising node.js, express, SQL, and TDD (test driven development ) to build a RESTful API. It contains various endpoints to GET reviews of boardgames, GET and POST comments onto those reviews. (This project is still in development, and will soon be consumed by a react frontend to create a full-stack application).
+This project was undertaken to focus learning on utilising node.js, express, SQL, and TDD (test driven development) to build a RESTful API. It contains various endpoints to GET reviews of board games, and GET and POST comments onto those reviews. (This project is still in development, and will soon be consumed by a react frontend to create a full-stack application).
 
 ### How to run this locally
 
