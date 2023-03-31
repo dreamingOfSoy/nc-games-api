@@ -8,4 +8,10 @@ exports.psqlErrorHandler = (err, req, res, next) => {
     res.status(404).send({
       error: `${req.body.username} does not exist`,
     });
+
+  if (err.code === "42703") {
+    res.status(400).send({
+      error: `${Object.values(req.query)} does not exist`,
+    });
+  }
 };
