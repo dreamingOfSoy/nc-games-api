@@ -11,6 +11,8 @@ const { getAllUsers } = require("./controllers/userController");
 const { clientErrorHandler } = require("./errorHandlers/clientErrorHandler");
 const { psqlErrorHandler } = require("./errorHandlers/psqlErrorHandler");
 
+const endpointsJson = require("./endpoints.json");
+
 const express = require("express");
 
 const app = express();
@@ -25,6 +27,18 @@ app.post("/api/reviews/:review_id/comments", postOneComment);
 app.patch("/api/reviews/:review_id", patchOneReview);
 app.delete("/api/comments/:comment_id", deleteOneComment);
 app.get("/api/users", getAllUsers);
+app.get("/api", (req, res, next) => {
+  if (!endpointsJson) {
+    return next(
+      new Error({
+        error: `Something went wrong`,
+        status: 400,
+      })
+    );
+  }
+
+  res.status(200).send({ endpoints: endpointsJson });
+});
 
 app.all("*", (req, res, next) => {
   res.status(404).send({

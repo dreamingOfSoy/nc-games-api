@@ -26,7 +26,104 @@
           "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
           "category": "hidden-roles",
           "created_at": 1610964101251,
-          "votes": 5
+          "votes": 5,
+          "comment_count": 3
+        }
+      ]
+    }
+  },
+  "GET /api/reviews/:review_id": {
+    "description": "serves an array containing one review based on review id parameter",
+    "queries": [],
+    "exampleResponse": {
+      "review": [
+        {
+          "review_id": 3,
+          "title": "Karma Karma Chameleon",
+          "category": "hidden-roles",
+          "designer": "Rikki Tahta",
+          "owner": "happyamy2016",
+          "review_body": "Try to trick your friends. If you find yourself being dealt the Chamelean card then the aim of the game is simple; blend in... Meanwhile the other players aim to be as vague as they can to not give the game away ",
+          "review_img_url": "https://images.pexels.com/photos/45868/chameleon-reptile-lizard-green-45868.jpeg?w=700&h=700",
+          "created_at": "2021-01-18T10:01:42.151Z",
+          "votes": 5,
+          "comment_count": 5
+        }
+      ]
+    }
+  },
+  "GET /api/reviews/:review_id/comments": {
+    "description": "serves an array of all comments for a specific review",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 19,
+          "votes": 3,
+          "created_at": "2021-03-27T19:48:58.110Z",
+          "author": "jessjelly",
+          "body": "Quis duis mollit ad enim deserunt.",
+          "review_id": 3
+        }
+      ]
+    }
+  },
+  "POST /api/reviews/:review_id/comments": {
+    "description": "posts a comment onto a single review and responds with added review",
+    "queries": [],
+    "exampleBody": {
+      "username": "jessjelly",
+      "body": "Great review!"
+    },
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 19,
+          "votes": 3,
+          "created_at": "2021-03-27T19:48:58.110Z",
+          "author": "jessjelly",
+          "body": "Great review!",
+          "review_id": 3
+        }
+      ]
+    }
+  },
+  "PATCH /api/reviews/:review_id": {
+    "description": "patch a review to update the number of votes",
+    "queries": [],
+    "exampleBody": {
+      "inc_votes": 10
+    },
+    "exampleResponse": {
+      "review": [
+        {
+          "review_id": 3,
+          "title": "Karma Karma Chameleon",
+          "category": "hidden-roles",
+          "designer": "Rikki Tahta",
+          "owner": "happyamy2016",
+          "review_body": "Try to trick your friends. If you find yourself being dealt the Chamelean card then the aim of the game is simple; blend in... Meanwhile the other players aim to be as vague as they can to not give the game away ",
+          "review_img_url": "https://images.pexels.com/photos/45868/chameleon-reptile-lizard-green-45868.jpeg?w=700&h=700",
+          "created_at": "2021-01-18T10:01:42.151Z",
+          "votes": 15
+        }
+      ]
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes a comment given a comment id",
+    "queries": [],
+    "exampleResponse": "204 No Content"
+  },
+  "GET /api/users": {
+    "description": "gets all users in the database",
+    "queries": [],
+    "exampleResponse": {
+      "reviews": [
+        {
+          "username": "tickle122",
+          "name": "Tom Tickle",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
         }
       ]
     }
