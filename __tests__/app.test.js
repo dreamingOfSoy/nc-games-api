@@ -73,6 +73,21 @@ describe("GET /api/reviews/:review_id", () => {
       });
   });
 
+  it("200 - should respond with correct status code and include an additional comment_count field in response", () => {
+    return request(app)
+      .get("/api/reviews/2")
+      .expect(200)
+      .then((res) => {
+        const {
+          review: [review],
+        } = res.body;
+
+        expect(review.review_id).toBe(2);
+        expect(review).toHaveProperty("comment_count");
+        expect(review.comment_count).toBe(3);
+      });
+  });
+
   it("404 - should respond with correct status code and contain an empty array when no entry is found", () => {
     return request(app)
       .get("/api/reviews/99999")
