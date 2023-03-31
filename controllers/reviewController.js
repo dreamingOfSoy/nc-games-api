@@ -21,16 +21,7 @@ exports.getAllReviews = (req, res, next) => {
 
   reviews
     .then((data) => {
-      {
-        if (category && data.length === 0) {
-          return Promise.reject({
-            error: `No category with the name ${category}`,
-            status: 404,
-          });
-        }
-
-        res.status(200).send({ reviews: data });
-      }
+      res.status(200).send({ reviews: data });
     })
     .catch(next);
 };

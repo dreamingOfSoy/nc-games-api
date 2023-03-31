@@ -17,47 +17,59 @@ exports.findOneReview = (id) => {
 };
 
 exports.findAllReviews = (category, sort_by, order = "desc") => {
-  if (order !== "asc" && order !== "desc") {
-    return Promise.reject({
-      error: "Order query can only be asc or desc",
-      status: 400,
-    });
-  }
+  return db.query("SELECT slug FROM categories").then((res) => {
+    const categories = res.rows.map((row) => row.slug.replace("'", ""));
 
-  let queryString = `
-  SELECT 
-  reviews.owner,
-  reviews.title,
-  reviews.review_id,
-  reviews.category,
-  reviews.review_img_url,
-  reviews.created_at,
-  reviews.votes,
-  reviews.designer, 
-  CAST(COUNT(comments.comment_id) AS INT) AS comment_count 
-  FROM reviews
-  LEFT JOIN comments ON comments.review_id = reviews.review_id
-  GROUP BY reviews.review_id
-  ORDER BY created_at ${order.toUpperCase()}
+    if (order !== "asc" && order !== "desc") {
+      return Promise.reject({
+        error: "Order query can only be asc or desc",
+        status: 400,
+      });
+    }
+
+    let queryString = `
+    SELECT 
+    reviews.owner,
+    reviews.title,
+    reviews.review_id,
+    reviews.category,
+    reviews.review_img_url,
+    reviews.created_at,
+    reviews.votes,
+    reviews.designer, 
+    CAST(COUNT(comments.comment_id) AS INT) AS comment_count 
+    FROM reviews
+    LEFT JOIN comments ON comments.review_id = reviews.review_id
+    GROUP BY reviews.review_id
+    ORDER BY created_at ${order.toUpperCase()}
   `;
 
-  if (category) {
-    queryString = queryString.replace(
-      "GROUP BY reviews.review_id",
-      format("WHERE reviews.category = %L GROUP BY reviews.review_id", [
-        category.replace("-", " "),
-      ])
-    );
-  }
+    if (category) {
+      category = category.replace("-", " ");
+      if (!categories.includes(category)) {
+        return Promise.reject({
+          error: `No category with the name ${category}`,
+          status: 404,
+        });
+      }
 
-  if (sort_by) {
-    queryString = queryString.replace(
-      "ORDER BY created_at",
-      format("ORDER BY reviews.%s", [sort_by])
-    );
-  }
+      queryString = queryString.replace(
+        "GROUP BY reviews.review_id",
+        format("WHERE reviews.category = %L GROUP BY reviews.review_id", [
+          category,
+        ])
+      );
+    }
 
-  return db.query(queryString).then((res) => res.rows);
+    if (sort_by) {
+      queryString = queryString.replace(
+        "ORDER BY created_at",
+        format("ORDER BY reviews.%s", [sort_by])
+      );
+    }
+
+    return db.query(queryString).then((res) => res.rows);
+  });
 };
 
 exports.findAllComments = (id) => {
