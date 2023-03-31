@@ -147,6 +147,16 @@ describe("GET /api/reviews", () => {
           });
         });
     });
+    it("200 - should respond with empty array if category exists but there are no reviews using it", () => {
+      return request(app)
+        .get("/api/reviews?category=childrens-games")
+        .expect(200)
+        .then((res) => {
+          const { reviews } = res.body;
+
+          expect(reviews).toHaveLength(0);
+        });
+    });
     it("200 - should respond with reviews sorted by the query field", () => {
       return request(app)
         .get("/api/reviews?sort_by=votes&order=asc")
