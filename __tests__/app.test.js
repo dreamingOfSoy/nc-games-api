@@ -17,6 +17,33 @@ afterAll(() => {
   return db.end();
 });
 
+describe("GET /api", () => {
+  it("200 - should respond with correct status code and return correct response", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then((res) => {
+        const { body } = res;
+
+        expect(body).toEqual(
+          expect.objectContaining({
+            endpoints: {
+              "GET /api": expect.anything(),
+              "GET /api/categories": expect.anything(),
+              "GET /api/reviews": expect.anything(),
+              "GET /api/reviews/:review_id": expect.anything(),
+              "GET /api/reviews/:review_id/comments": expect.anything(),
+              "POST /api/reviews/:review_id/comments": expect.anything(),
+              "PATCH /api/reviews/:review_id": expect.anything(),
+              "DELETE /api/comments/:comment_id": expect.anything(),
+              "GET /api/users": expect.anything(),
+            },
+          })
+        );
+      });
+  });
+});
+
 describe("ALL /api/wrong-path", () => {
   it("404 - should respond with the correct status code and message if given a url that is not available on this server", () => {
     return request(app)
