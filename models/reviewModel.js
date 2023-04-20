@@ -116,7 +116,7 @@ exports.addOneComment = (id, comment) => {
 };
 
 exports.updateOneReview = (id, body) => {
-  const inputIsNotNumber = !/^[0-9]*$/.test(body.inc_votes);
+  const inputIsNotNumber = !/^-?[0-9]*$/.test(body.inc_votes);
 
   if (body && !body.inc_votes) {
     return Promise.reject({
