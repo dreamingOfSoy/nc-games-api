@@ -48,7 +48,8 @@ exports.findAllReviews = (category, sort_by, order = "desc") => {
   `;
 
     if (category) {
-      category = category?.replaceAll("-", " ");
+      console.log(category);
+      category = category.replaceAll("-", " ");
       if (!categories.includes(category)) {
         return Promise.reject({
           error: `No category with the name ${category}`,
