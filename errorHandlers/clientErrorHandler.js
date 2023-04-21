@@ -1,4 +1,5 @@
 exports.clientErrorHandler = (err, req, res, next) => {
+  console.log(err);
   if (
     err.status === 400 &&
     err.error === "Invalid input type for votes, input must be a number"
@@ -26,7 +27,8 @@ exports.clientErrorHandler = (err, req, res, next) => {
 
   if (
     err.status === 404 &&
-    err.error === `No category with the name ${req.query.category}`
+    err.error ===
+      `No category with the name ${req.query.category.replaceAll("-", " ")}`
   ) {
     res.status(404).send(err);
   }
