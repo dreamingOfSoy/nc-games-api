@@ -28,7 +28,7 @@ exports.clientErrorHandler = (err, req, res, next) => {
   if (
     err.status === 404 &&
     err.error ===
-      `No category with the name ${req.query.category.replaceAll("-", " ")}`
+      `No category with the name ${req.query.category?.replaceAll("-", " ")}`
   ) {
     res.status(404).send(err);
   }
