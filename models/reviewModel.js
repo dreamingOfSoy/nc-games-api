@@ -48,8 +48,8 @@ exports.findAllReviews = (category, sort_by, order = "desc") => {
   `;
 
     if (category) {
-      console.log(category);
-      category = category.replaceAll("-", " ");
+      // apparently replaceAll isn't a function in node ???
+      category = category.replace(/-/g, " ");
       if (!categories.includes(category)) {
         return Promise.reject({
           error: `No category with the name ${category}`,
