@@ -25,6 +25,10 @@ exports.clientErrorHandler = (err, req, res, next) => {
     res.status(404).send(err);
   }
 
+  if (err.status === 404 && err.error === "comment not found") {
+    res.status(404).send(err);
+  }
+
   if (
     err.status === 404 &&
     err.error ===

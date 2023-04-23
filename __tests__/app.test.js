@@ -539,7 +539,7 @@ describe("DELETE /api/comments/:comment_id", () => {
     return request(app)
       .delete("/api/comments/3")
       .then(() => {
-        return request(app).delete("/api/reviews/3").expect(404);
+        return request(app).delete("/api/comments/3").expect(404);
       });
   });
   it("404 - should respond with 404 if comment is not in the db", () => {
@@ -549,7 +549,7 @@ describe("DELETE /api/comments/:comment_id", () => {
       .then((res) => {
         const { error } = res.body;
 
-        expect(error).toBe("review not found");
+        expect(error).toBe("comment not found");
       });
   });
   it("400 - should respond with correct status code when inputting incorrect comment id", () => {
