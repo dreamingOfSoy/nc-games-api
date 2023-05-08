@@ -1,3 +1,6 @@
+const xss = require("xss-clean");
+const rateLimit = require("express-rate-limit");
+
 const { getAllCategories } = require("./controllers/categoryController");
 const {
   getOneReview,
@@ -21,6 +24,16 @@ const app = express();
 app.use(cors());
 
 app.use(express.json());
+
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: "Too many requests from this IP. Please try again in an hour.",
+});
+
+app.use("/api", limiter);
+
+app.use(xss());
 
 app.get("/api/categories", getAllCategories);
 app.get("/api/reviews/:review_id", getOneReview);
